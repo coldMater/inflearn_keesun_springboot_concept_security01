@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,14 +21,25 @@ class HomeControllerTest {
     MockMvc mockMvc;
 
     @Test
-    public void hello() throws Exception {
-        mockMvc.perform(get("/hello"))
+    public void hello_without_user() throws Exception {
+        mockMvc.perform(
+                get("/hello"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    public void hello_with_user() throws Exception {
+        mockMvc.perform(
+                get("/hello"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("hello"));
     }
 
     @Test
+    @WithMockUser
     public void my() throws Exception {
         mockMvc.perform(get("/my"))
                 .andDo(print())
